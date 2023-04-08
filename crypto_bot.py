@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime
 
 # Initialize the Telegram bot with your API token
-bot = telebot.TeleBot('Token_here')
+bot = telebot.TeleBot('Token_here ')
 
 # Define a list of cryptocurrencies to fetch rates for
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
