@@ -28,6 +28,7 @@ class CryptoButtons(GridLayout):
         self.parent.display_crypto(symbol)
 
 
+
 class CryptoDisplay(GridLayout):
     def __init__(self, **kwargs):
         super(CryptoDisplay, self).__init__(**kwargs)
