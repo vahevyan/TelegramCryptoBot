@@ -9,7 +9,7 @@ from io import BytesIO
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('BOT_TOKEN_HERE')
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -163,9 +163,6 @@ def handle_message(message):
     global calculating, last_command
     if calculating and last_command == 'calculator':
         try:
-            if message.text == "Back":
-                handle_start(message)
-                return
             amount, crypto = message.text.split()
             crypto = crypto.upper()
             amount = float(amount)
@@ -178,6 +175,9 @@ def handle_message(message):
                 bot.send_message(message.chat.id, f'Invalid cryptocurrency. Please choose from {", ".join(cryptos)}')
         except ValueError:
             bot.send_message(message.chat.id, 'Invalid input. Please enter the amount and symbol of cryptocurrency')
+    elif message.text == 'Back':
+        handle_start(message)
+        return
     else:
         last_command = ''
         calculating = False
