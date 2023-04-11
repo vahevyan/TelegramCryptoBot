@@ -20,12 +20,6 @@ def get_crypto_rate(crypto):
     return rate
 
 
-def get_crypto_history(crypto, days):
-    ticker = yf.Ticker(f'{crypto}-USD')
-    history = ticker.history(period=f'{days}d')
-    return history
-
-
 calculating = True
 last_command = ''
 
