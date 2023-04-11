@@ -12,7 +12,7 @@ from io import BytesIO
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('Token_here')
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -29,7 +29,7 @@ def get_crypto_history(crypto, days):
     return history
 
 
-calculating = False
+calculating = True
 last_command = ''
 
 
@@ -49,7 +49,7 @@ def handle_start(message):
 
     # START MESSAGE
 
-    bot.send_message(message.chat.id, "Hello! Here are available commands. Choose from them!", reply_markup=markup)
+    bot.send_message(message.chat.id, "Here are available commands. Choose from them!", reply_markup=markup)
 
 
 # FOR SENDING CRYPTO VALUES WITH DATE AND TIME
@@ -110,6 +110,7 @@ def handle_graph(message):
 
     markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
     buttons = [telebot.types.KeyboardButton(crypto) for crypto in cryptos]
+    buttons.append(telebot.types.KeyboardButton('Back'))
     markup.add(*buttons)
 
     # FOR SENDING MESSAGE TO USER FOR CHOOSING CURRENCY
@@ -118,9 +119,13 @@ def handle_graph(message):
     bot.register_next_step_handler(message, handle_graph_crypto_input)
 
 
+
 # FOR USERS TO INPUT DAYS FOR SHOWING GRAPH
 
 def handle_graph_crypto_input(message):
+    if message.text == "Back":
+        handle_start(message)
+        return
     crypto = message.text.upper()
     bot.send_message(message.chat.id, f"You chose {crypto}. How many days do you want to include in the graph?")
     bot.register_next_step_handler(message, handle_graph_days_input, crypto)
@@ -130,6 +135,8 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
+        if message.text == "Back":
+            handle_start(message)
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
         start_date = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
@@ -157,7 +164,10 @@ def handle_graph_days_input(message, crypto):
 def handle_message(message):
     global calculating, last_command
     if calculating and last_command == 'calculator':
+
         try:
+            if message.text == "Back":
+                handle_start(message)
             amount, crypto = message.text.split()
             crypto = crypto.upper()
             amount = float(amount)
