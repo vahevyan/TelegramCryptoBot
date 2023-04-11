@@ -135,8 +135,9 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
-        if message.text == "Back":
+        if message.text == 'Back':
             handle_start(message)
+            return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
         start_date = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
@@ -164,10 +165,10 @@ def handle_graph_days_input(message, crypto):
 def handle_message(message):
     global calculating, last_command
     if calculating and last_command == 'calculator':
-
         try:
             if message.text == "Back":
                 handle_start(message)
+                return
             amount, crypto = message.text.split()
             crypto = crypto.upper()
             amount = float(amount)
