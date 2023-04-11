@@ -75,7 +75,7 @@ def handle_all(message):
 def handle_help(message):
     global last_command
     last_command = 'help'
-    message_text = "If you have troubles or some technical issues contact with us. @vahevyan, @Haykarz"
+    message_text = "If you have troubles or some technical issues contact with us. @vahevyan"
     bot.send_message(message.chat.id, message_text)
 
 
