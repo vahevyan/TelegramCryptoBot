@@ -9,7 +9,7 @@ from io import BytesIO
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
+bot = telebot.TeleBot('YOUR_BOT_TOKEN')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -19,6 +19,10 @@ def get_crypto_rate(crypto):
     rate = ticker.info['regularMarketPrice']
     return rate
 
+def get_crypto_history(crypto, days):
+    ticker = yf.Ticker(f'{crypto}-USD')
+    history = ticker.history(period=f'{days}d')
+    return history
 
 calculating = True
 last_command = ''
@@ -134,8 +138,8 @@ def handle_graph_days_input(message, crypto):
         start_date = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
         end_date = datetime.today().strftime('%Y-%m-%d')
         historical_data = ticker.history(start=start_date, end=end_date)
-        plt.figure(figsize=(8, 6))
-        plt.plot(historical_data['Close'])
+        plt.figure(figsize=(10, 8))
+        plt.plot(historical_data['crypto_close_price_24h'])
         plt.title(f"{crypto} Price (Last {days} Days)")
         plt.xlabel("Date")
         plt.ylabel("Price (USD)")
@@ -175,7 +179,7 @@ def handle_message(message):
     else:
         last_command = ''
         calculating = False
-        bot.send_message(message.chat.id, f'Please use the functions button below first before using the feature.')
+        bot.send_message(message.chat.id, f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
 
 # BOT START COMMAND
 
