@@ -9,7 +9,7 @@ from io import BytesIO
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('YOUR_BOT_TOKEN')
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -105,7 +105,8 @@ def handle_graph(message):
 
     markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
     buttons = [telebot.types.KeyboardButton(crypto) for crypto in cryptos]
-    buttons.append(telebot.types.KeyboardButton('Back'))
+    buttons.append(telebot.types.KeyboardButton('Graph again'))
+    buttons.append(telebot.types.KeyboardButton('Main menu'))
     markup.add(*buttons)
 
     # FOR SENDING MESSAGE TO USER FOR CHOOSING CURRENCY
@@ -118,8 +119,11 @@ def handle_graph(message):
 # FOR USERS TO INPUT DAYS FOR SHOWING GRAPH
 
 def handle_graph_crypto_input(message):
-    if message.text == "Back":
+    if message.text == "Main menu":
         handle_start(message)
+        return
+    elif message.text == "Graph again":
+        handle_graph(message)
         return
     crypto = message.text.upper()
     bot.send_message(message.chat.id, f"You chose {crypto}. How many days do you want to include in the graph?")
@@ -130,8 +134,11 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
-        if message.text == 'Back':
+        if message.text == 'Main menu':
             handle_start(message)
+            return
+        elif message.text == 'Graph again':
+            handle_graph(message)
             return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
@@ -173,8 +180,11 @@ def handle_message(message):
                 bot.send_message(message.chat.id, f'Invalid cryptocurrency. Please choose from {", ".join(cryptos)}')
         except ValueError:
             bot.send_message(message.chat.id, 'Invalid input. Please enter the amount and symbol of cryptocurrency')
-    elif message.text == 'Back':
+    elif message.text == 'Main menu':
         handle_start(message)
+        return
+    elif message.text == 'Graph again':
+        handle_graph(message)
         return
     else:
         last_command = ''
