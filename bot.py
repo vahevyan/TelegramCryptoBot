@@ -139,7 +139,7 @@ def handle_graph_days_input(message, crypto):
         end_date = datetime.today().strftime('%Y-%m-%d')
         historical_data = ticker.history(start=start_date, end=end_date)
         plt.figure(figsize=(10, 8))
-        plt.plot(historical_data['crypto_close_price_24h'])
+        plt.plot(historical_data['Close'])
         plt.title(f"{crypto} Price (Last {days} Days)")
         plt.xlabel("Date")
         plt.ylabel("Price (USD)")
