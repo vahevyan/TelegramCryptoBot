@@ -185,7 +185,7 @@ def handle_graph_days_input(message, crypto):
         # Send the plot directly
 
         buf = BytesIO()
-        fig.savefig(buf, format='png')
+        fig.savefig(buf, format='png', bbox_inches='tight')
         buf.seek(0)
         bot.send_photo(message.chat.id, photo=buf)
 
