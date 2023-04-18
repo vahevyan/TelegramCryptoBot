@@ -4,7 +4,7 @@
 import telebot
 import yfinance as yf
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
+import mplfinance as mpf
 from io import BytesIO
 
 # BOT TOKEN
@@ -134,32 +134,64 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
-        if message.text == 'Main menu':
-            handle_start(message)
-            return
-        elif message.text == 'Graph again':
+        if message.text == 'Graph again':
             handle_graph(message)
+            return
+        elif message.text == 'Main menu':
+            handle_start(message)
             return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
         start_date = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
         end_date = datetime.today().strftime('%Y-%m-%d')
         historical_data = ticker.history(start=start_date, end=end_date)
-        plt.figure(figsize=(10, 8))
-        plt.plot(historical_data['Close'])
-        plt.title(f"{crypto} Price (Last {days} Days)")
-        plt.xlabel("Date")
-        plt.ylabel("Price (USD)")
-        plt.grid(True)
+
+        # Calculate the MACD indicator
+
+        exp1 = historical_data['Close'].ewm(span=12, adjust=False).mean()
+        exp2 = historical_data['Close'].ewm(span=26, adjust=False).mean()
+        macd = exp1 - exp2
+        signal = macd.ewm(span=9, adjust=False).mean()
+
+        # Create the plot with the MACD indicator
+
+        fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
+                 title=f"{crypto} Price (Last {days} Days)", ylabel='Price (USD)', ylabel_lower='Volume',
+                 show_nontrading=True, returnfig=True,
+                 figratio=(1.5, 1), figscale=1.5,
+                 addplot=[mpf.make_addplot(macd, color='orange', panel=1),
+                          mpf.make_addplot(signal, color='purple', panel=1)])
+
+        # Generate signals based on the MACD indicator
+
+        buy_signals = []
+        sell_signals = []
+        for i in range(1, len(signal)):
+            if macd[i] > signal[i] and macd[i-1] <= signal[i-1]:
+                buy_signals.append((historical_data.index[i], historical_data['Close'][i]))
+            elif macd[i] < signal[i] and macd[i-1] >= signal[i-1]:
+                sell_signals.append((historical_data.index[i], historical_data['Close'][i]))
+
+        # Display the signals
+
+        message_text = f"{crypto} Buy Signals:\n"
+        for signal in buy_signals:
+            message_text += f"{signal[0].strftime('%Y-%m-%d')}: {signal[1]:.2f}\n"
+        message_text += f"\n{crypto} Sell Signals:\n"
+        for signal in sell_signals:
+            message_text += f"{signal[0].strftime('%Y-%m-%d')}: {signal[1]:.2f}\n"
+        bot.send_message(message.chat.id, message_text)
+
+        # Send the plot directly
+
         buf = BytesIO()
-        plt.savefig(buf, format='png')
+        fig.savefig(buf, format='png')
         buf.seek(0)
         bot.send_photo(message.chat.id, photo=buf)
 
     except ValueError:
         bot.send_message(message.chat.id, "Invalid input. Please enter an integer number of days.")
         bot.register_next_step_handler(message, handle_graph_days_input, crypto)
-
 
 # FUNCTIONAL FOR CALCULATOR
 
