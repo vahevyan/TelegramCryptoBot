@@ -9,7 +9,7 @@ from io import BytesIO
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
+bot = telebot.TeleBot('TOKEN_HERE')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
