@@ -12,6 +12,7 @@ bot = telebot.TeleBot('YOUR_TOKEN')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
+
 def get_crypto_rate(crypto):
     ticker = yf.Ticker(f'{crypto}-USD')
     rate = ticker.info['regularMarketPrice']
