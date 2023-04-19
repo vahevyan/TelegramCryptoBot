@@ -16,7 +16,11 @@ cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 def get_crypto_rate(crypto):
     ticker = yf.Ticker(f'{crypto}-USD')
     rate = ticker.info['regularMarketOpen']
+    print(ticker.history(period='10d'))
+    print(ticker.info)
+    print(f"Todays rate of {crypto} = ${rate}")
     return rate
+
 
 def get_crypto_history(crypto, days):
     ticker = yf.Ticker(f'{crypto}-USD')
