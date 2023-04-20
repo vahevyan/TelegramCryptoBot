@@ -7,7 +7,7 @@ from io import BytesIO
 import yfinance as yf
 # BOT TOKEN
 
-bot = telebot.TeleBot('5861512873:AAF-abJJ3hgHLEPlrvXygTDm-6DlVr7OCkg')
+bot = telebot.TeleBot('TOKEN')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
