@@ -7,7 +7,7 @@ from io import BytesIO
 import yfinance as yf
 # BOT TOKEN
 
-bot = telebot.TeleBot('TOKEN')
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -155,14 +155,20 @@ def handle_graph_days_input(message, crypto):
         macd = exp1 - exp2
         signal = macd.ewm(span=9, adjust=False).mean()
 
-        # Create the plot with the MACD indicator
+        # Get the last price
+
+        last_price = ticker.info['regularMarketPrice']
+
+        # Create the plot with the MACD indicator and last price
 
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
-                 title=f"{crypto} Price (Last {days} Days)", ylabel='Price (USD)', ylabel_lower='Volume',
+                 title=f"{crypto} Price (Last {days} Days)", ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
                  show_nontrading=True, returnfig=True,
                  figratio=(1.5, 1), figscale=1.5,
                  addplot=[mpf.make_addplot(macd, color='orange', panel=1),
-                          mpf.make_addplot(signal, color='purple', panel=1)])
+                          mpf.make_addplot(signal, color='purple', panel=1),
+                          mpf.make_addplot([last_price]*len(historical_data), type='line', color='green',
+                                           width=0.7, alpha=0.7, panel=0)])
 
         # Generate signals based on the MACD indicator
 
