@@ -1,21 +1,20 @@
 # IMPORTS
 
 import telebot
-import yfinance as yf
 from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
-
+import yfinance as yf
 # BOT TOKEN
 
-bot = telebot.TeleBot('YOUR_TOKEN')
+bot = telebot.TeleBot('5861512873:AAF-abJJ3hgHLEPlrvXygTDm-6DlVr7OCkg')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
 
 def get_crypto_rate(crypto):
     ticker = yf.Ticker(f'{crypto}-USD')
-    rate = ticker.info['regularMarketOpen']
+    rate = ticker.info['regularMarketPrice']
     print(ticker.history(period='10d'))
     print(ticker.info)
     print(f"Todays rate of {crypto} = ${rate}")
