@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
 import yfinance as yf
+
 # BOT TOKEN
 
 bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
@@ -122,9 +123,11 @@ def handle_graph(message):
 
 def handle_graph_crypto_input(message):
     if message.text == "Main menu":
+        print('User clicked "Main menu"')
         handle_start(message)
         return
     elif message.text == "Graph again":
+        print('User clicked "Graph again"')
         handle_graph(message)
         return
     crypto = message.text.upper()
@@ -136,11 +139,13 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
-        if message.text == 'Graph again':
-            handle_graph(message)
-            return
-        elif message.text == 'Main menu':
+        if message.text == "Main menu":
+            print('User clicked "Main menu"')
             handle_start(message)
+            return
+        elif message.text == "Graph again":
+            print('User clicked "Graph again"')
+            handle_graph(message)
             return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
@@ -221,9 +226,11 @@ def handle_message(message):
         except ValueError:
             bot.send_message(message.chat.id, 'Invalid input. Please enter the amount and symbol of cryptocurrency')
     elif message.text == 'Main menu':
+        print('User clicked "Main menu"')
         handle_start(message)
         return
     elif message.text == 'Graph again':
+        print('User clicked "Graph again"')
         handle_graph(message)
         return
     else:
