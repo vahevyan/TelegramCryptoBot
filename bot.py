@@ -5,9 +5,10 @@ from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
 import yfinance as yf
+
 # BOT TOKEN
 
-bot = telebot.TeleBot('TOKEN')
+bot = telebot.TeleBot('Token')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -122,9 +123,11 @@ def handle_graph(message):
 
 def handle_graph_crypto_input(message):
     if message.text == "Main menu":
+        print('User clicked "Main menu"')
         handle_start(message)
         return
     elif message.text == "Graph again":
+        print('User clicked "Graph again"')
         handle_graph(message)
         return
     crypto = message.text.upper()
@@ -136,11 +139,13 @@ def handle_graph_crypto_input(message):
 
 def handle_graph_days_input(message, crypto):
     try:
-        if message.text == 'Graph again':
-            handle_graph(message)
-            return
-        elif message.text == 'Main menu':
+        if message.text == "Main menu":
+            print('User clicked "Main menu"')
             handle_start(message)
+            return
+        elif message.text == "Graph again":
+            print('User clicked "Graph again"')
+            handle_graph(message)
             return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
@@ -155,14 +160,20 @@ def handle_graph_days_input(message, crypto):
         macd = exp1 - exp2
         signal = macd.ewm(span=9, adjust=False).mean()
 
-        # Create the plot with the MACD indicator
+        # Get the last price
+
+        last_price = ticker.info['regularMarketPrice']
+
+        # Create the plot with the MACD indicator and last price
 
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
-                 title=f"{crypto} Price (Last {days} Days)", ylabel='Price (USD)', ylabel_lower='Volume',
+                 title=f"{crypto} Price (Last {days} Days)", ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
                  show_nontrading=True, returnfig=True,
                  figratio=(1.5, 1), figscale=1.5,
                  addplot=[mpf.make_addplot(macd, color='orange', panel=1),
-                          mpf.make_addplot(signal, color='purple', panel=1)])
+                          mpf.make_addplot(signal, color='purple', panel=1),
+                          mpf.make_addplot([last_price]*len(historical_data), type='line', color='green',
+                                           width=0.7, alpha=0.7, panel=0)])
 
         # Generate signals based on the MACD indicator
 
@@ -215,9 +226,11 @@ def handle_message(message):
         except ValueError:
             bot.send_message(message.chat.id, 'Invalid input. Please enter the amount and symbol of cryptocurrency')
     elif message.text == 'Main menu':
+        print('User clicked "Main menu"')
         handle_start(message)
         return
     elif message.text == 'Graph again':
+        print('User clicked "Graph again"')
         handle_graph(message)
         return
     else:
