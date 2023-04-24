@@ -8,7 +8,7 @@ import yfinance as yf
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('Token')
+bot = telebot.TeleBot('Bot_Token')
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
