@@ -9,11 +9,46 @@ CryotoBot is a Telegram bot that shows live crypto rates from YahooFinance API a
 - **' Calculator '**: initiates a calculator function that allows users to input an amount and cryptocurrency to get the value in USD
 - **' Graph '** : initiates a function to generate a graph of a cryptocurrency's historical prices over a specified number of days
 
-The bot also uses a MongoDB database to store information about each cryptocurrency's price and the time of the update.Overall, this code provides a useful set of functionalities for a cryptocurrency bot on Telegram
+The bot also uses a MongoDB database to store information about each cryptocurrency's price and the time of the update
 
 
 # Installation
 
 To use CryptoBot, you will need to install python libraries from [requirements.txt
-](requirements.txt)
+](requirements.txt) using this command in terminal:
 
+```bash
+pip install -r requirements.txt
+```
+or
+
+```bash
+pip install pyTelegramBotAPI
+pip install yfinance==0.2.14
+pip install mplfinance
+pip install bytesbufio
+pip install pymongo
+```
+
+After you need to import all libraries and connect to your Mongodb database
+
+```python
+import telebot
+from datetime import datetime, timedelta
+import mplfinance as mpf
+from io import BytesIO
+import yfinance as yf
+import pymongo
+
+client = pymongo.MongoClient("Your_mongodb_client_uri")
+```
+
+
+# Usage
+
+After cloning the repository and installing the required libraries, you can use Limbo by running the bot.py file:
+```Bash
+python bot.py
+```
+
+Overall, this code provides a useful set of functionalities for a cryptocurrency bot on Telegram
