@@ -1,6 +1,6 @@
 # CryptoBot
 
-CryptoBot is a Telegram bot that shows live crypto rates from YahooFinance API and draws chatrs with choosen days.The bot can handle the following buttons and commands:
+CryptoBot is a Telegram bot that shows live crypto rates from YahooFinance API and draws charts with choosen days.The bot can handle the following buttons and commands:
 
 - **' /start '**: displays available commands
 - A specific cryptocurrency symbol: displays the current price of that cryptocurrency and adds it to a MongoDB database
