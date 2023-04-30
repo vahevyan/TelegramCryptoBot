@@ -1,0 +1,6 @@
+pyTelegramBotAPI
+yfinance==0.2.14
+datatime
+mplfinance
+bytesbufio
+pymongo
