@@ -1,6 +1,5 @@
 pyTelegramBotAPI
 yfinance==0.2.14
-DateTime
 mplfinance
 bytesbufio
 pymongo
