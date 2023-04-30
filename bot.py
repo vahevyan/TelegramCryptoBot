@@ -47,7 +47,6 @@ def get_crypto_history(crypto, days):
 calculating = True
 last_command = ''
 
-
 # START COMMAND AND BUTTOMS
 
 @bot.message_handler(commands=['start'])
