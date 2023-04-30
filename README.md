@@ -44,7 +44,7 @@ client = pymongo.MongoClient("Your_mongodb_client_uri")
 ```
 
 
-# Usage
+# How to use
 
 After cloning the repository and installing the required libraries, you can use Limbo by running the bot.py file:
 ```Bash
