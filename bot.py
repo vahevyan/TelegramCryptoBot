@@ -5,10 +5,22 @@ from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
 import yfinance as yf
+import pymongo
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('Token')
+bot = telebot.TeleBot('Token_here')
+
+# MONGODB CONNECTION
+
+client = pymongo.MongoClient("Your_mongodb_client_link")
+db = client["Your_database_name"]
+cryptosdb = db["cryptos"]
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -26,6 +38,7 @@ def get_crypto_history(crypto, days):
     ticker = yf.Ticker(f'{crypto}-USD')
     history = ticker.history(period=f'{days}d')
     return history
+
 
 calculating = True
 last_command = ''
@@ -59,6 +72,15 @@ def handle_crypto(message):
     crypto = message.text
     rate = get_crypto_rate(crypto)
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
+
+    # Insert the crypto data to MongoDB
+
+    cryptosdb.insert_one({
+        "crypto": crypto,
+        "rate": rate,
+        "datetime": datetime.now()
+    })
+
     bot.send_message(message.chat.id, message_text)
 
 
@@ -118,7 +140,6 @@ def handle_graph(message):
     bot.register_next_step_handler(message, handle_graph_crypto_input)
 
 
-
 # FOR USERS TO INPUT DAYS FOR SHOWING GRAPH
 
 def handle_graph_crypto_input(message):
@@ -138,15 +159,18 @@ def handle_graph_crypto_input(message):
 # FUNCTIONAL FOR GRAPH
 
 def handle_graph_days_input(message, crypto):
+    global history
     try:
         if message.text == "Main menu":
             print('User clicked "Main menu"')
             handle_start(message)
             return
-        elif message.text == "Graph again":
-            print('User clicked "Graph again"')
-            handle_graph(message)
-            return
+        elif message.text.isdigit():
+            days = int(message.text)
+            history = get_crypto_history(crypto, days)
+            if len(history) == 0:
+                bot.send_message(message.chat.id, f"No historical data found for {crypto} in the past {days} days.")
+                return
         days = int(message.text)
         ticker = yf.Ticker(f"{crypto}-USD")
         start_date = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
@@ -167,22 +191,23 @@ def handle_graph_days_input(message, crypto):
         # Create the plot with the MACD indicator and last price
 
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
-                 title=f"{crypto} Price (Last {days} Days)", ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
-                 show_nontrading=True, returnfig=True,
-                 figratio=(1.5, 1), figscale=1.5,
-                 addplot=[mpf.make_addplot(macd, color='orange', panel=1),
-                          mpf.make_addplot(signal, color='purple', panel=1),
-                          mpf.make_addplot([last_price]*len(historical_data), type='line', color='green',
-                                           width=0.7, alpha=0.7, panel=0)])
+                            title=f"{crypto} Price (Last {days} Days)",
+                            ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
+                            show_nontrading=True, returnfig=True,
+                            figratio=(1.5, 1), figscale=1.5,
+                            addplot=[mpf.make_addplot(macd, color='orange', panel=1),
+                                     mpf.make_addplot(signal, color='purple', panel=1),
+                                     mpf.make_addplot([last_price] * len(historical_data), type='line', color='green',
+                                                      width=0.7, alpha=0.7, panel=0)])
 
         # Generate signals based on the MACD indicator
 
         buy_signals = []
         sell_signals = []
         for i in range(1, len(signal)):
-            if macd[i] > signal[i] and macd[i-1] <= signal[i-1]:
+            if macd[i] > signal[i] and macd[i - 1] <= signal[i - 1]:
                 buy_signals.append((historical_data.index[i], historical_data['Close'][i]))
-            elif macd[i] < signal[i] and macd[i-1] >= signal[i-1]:
+            elif macd[i] < signal[i] and macd[i - 1] >= signal[i - 1]:
                 sell_signals.append((historical_data.index[i], historical_data['Close'][i]))
 
         # Display the signals
@@ -202,9 +227,20 @@ def handle_graph_days_input(message, crypto):
         buf.seek(0)
         bot.send_photo(message.chat.id, photo=buf)
 
+        # Insert the crypto price graph to MongoDB
+
+        graph_data = history.to_dict(orient='records')
+        cryptosdb.insert_one({
+            "crypto": crypto,
+            "graph_data": graph_data,
+            "datetime": datetime.now()
+        })
+        return
+
     except ValueError:
         bot.send_message(message.chat.id, "Invalid input. Please enter an integer number of days.")
         bot.register_next_step_handler(message, handle_graph_days_input, crypto)
+
 
 # FUNCTIONAL FOR CALCULATOR
 
@@ -236,7 +272,9 @@ def handle_message(message):
     else:
         last_command = ''
         calculating = False
-        bot.send_message(message.chat.id, f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
+        bot.send_message(message.chat.id,
+                         f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
+
 
 # BOT START COMMAND
 
