@@ -11,7 +11,7 @@ from pymongo.server_api import ServerApi
 # BOT TOKEN
 
 bot = telebot.TeleBot('Your_bot_token_here')
-print('!!!WAIT UNTIL MONGODB CONNECTING AFTER YOU CAN USE BOT!!!')
+print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
 
 # MONGODB CONNECTION
 
