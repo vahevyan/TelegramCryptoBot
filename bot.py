@@ -9,7 +9,7 @@ import pymongo
 
 # BOT TOKEN
 
-bot = telebot.TeleBot('Token_here')
+bot = telebot.TeleBot('Your_bot_token_here')
 
 # MONGODB CONNECTION
 
