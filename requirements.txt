@@ -3,3 +3,4 @@ yfinance==0.2.14
 mplfinance
 bytesbufio
 pymongo
+ 
