@@ -14,4 +14,6 @@ The bot also uses a MongoDB database to store information about each cryptocurre
 
 # Installation
 
-To use CryptoBot, you will need to install python libraries from te
+To use CryptoBot, you will need to install python libraries from [requirements.txt
+](requirements.txt)
+
