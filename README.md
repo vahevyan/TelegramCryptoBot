@@ -47,7 +47,7 @@ client = MongoClient("Your_mongodb_client_uri", server_api=ServerApi('1'))
 
 # How to use
 
-After cloning the repository and installing the required libraries, you can use Limbo by running the bot.py file:
+After cloning the repository and installing the required libraries, you can use CryptoBot by running the bot.py file:
 ```Bash
 python bot.py
 ```
