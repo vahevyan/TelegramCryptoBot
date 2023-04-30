@@ -13,7 +13,7 @@ bot = telebot.TeleBot('Your_bot_token_here')
 
 # MONGODB CONNECTION
 
-client = pymongo.MongoClient("Your_mongodb_client_link")
+client = pymongo.MongoClient("Your_mongodb_client_uri")
 db = client["Your_database_name"]
 cryptosdb = db["cryptos"]
 try:
