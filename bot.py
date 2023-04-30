@@ -275,7 +275,7 @@ def handle_message(message):
     else:
         last_command = ''
         calculating = False
-        bot.send_message(message.chat.id,f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
+        bot.send_message(message.chat.id, f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
 
 
 # BOT START COMMAND
