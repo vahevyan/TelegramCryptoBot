@@ -82,7 +82,6 @@ def handle_crypto(message):
     crypto = message.text
     rate = get_crypto_rate(crypto)
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
-    bot.send_message(message.chat.id, message_text)
 
     # Insert the crypto data to MongoDB
 
