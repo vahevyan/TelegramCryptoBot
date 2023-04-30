@@ -24,6 +24,7 @@ except Exception as e:
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
+
 # GETTING CRYPTO RATES FROM YAHOO FINANCE
 
 def get_crypto_rate(crypto):
@@ -33,6 +34,7 @@ def get_crypto_rate(crypto):
     print(ticker.info)
     print(f"Todays rate of {crypto} = ${rate}")
     return rate
+
 
 # GETTING CRYPTO RATES HISTORY FROM YAHOO FINANCE
 
