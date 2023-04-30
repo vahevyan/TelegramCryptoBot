@@ -38,7 +38,8 @@ from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
 import yfinance as yf
-import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 client = pymongo.MongoClient("Your_mongodb_client_uri")
 ```
