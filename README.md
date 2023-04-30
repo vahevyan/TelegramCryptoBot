@@ -41,7 +41,7 @@ import yfinance as yf
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-client = pymongo.MongoClient("Your_mongodb_client_uri")
+client = MongoClient("Your_mongodb_client_uri", server_api=ServerApi('1'))
 ```
 
 
