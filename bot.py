@@ -5,22 +5,29 @@ from datetime import datetime, timedelta
 import mplfinance as mpf
 from io import BytesIO
 import yfinance as yf
-import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 # BOT TOKEN
 
 bot = telebot.TeleBot('Your_bot_token_here')
+print('!!!WAIT UNTIL MONGODB CONNECTING AFTER YOU CAN USE BOT!!!')
 
 # MONGODB CONNECTION
 
-client = pymongo.MongoClient("Your_mongodb_client_uri")
+client = MongoClient("Your_mongodb_client_uri", server_api=ServerApi('1'))
 db = client["Your_database_name"]
 cryptosdb = db["cryptos"]
+
+# Send a ping to confirm a successful connection
+
 try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+# CRYPTOS LIST
 
 cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
@@ -75,6 +82,7 @@ def handle_crypto(message):
     crypto = message.text
     rate = get_crypto_rate(crypto)
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
+    bot.send_message(message.chat.id, message_text)
 
     # Insert the crypto data to MongoDB
 
@@ -83,8 +91,8 @@ def handle_crypto(message):
         "rate": rate,
         "datetime": datetime.now()
     })
-
-    bot.send_message(message.chat.id, message_text)
+    message_text_db = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
+    bot.send_message(message.chat.id, message_text_db)
 
 
 # FUNCTION FOR 'All Cryptos' BUTTOM
