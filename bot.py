@@ -54,7 +54,8 @@ def get_crypto_history(crypto, days):
 calculating = True
 last_command = ''
 
-# START COMMAND AND BUTTOMS
+
+# START COMMAND AND BUTTONS
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -90,11 +91,11 @@ def handle_crypto(message):
         "rate": rate,
         "datetime": datetime.now()
     })
-    message_text_db = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
-    bot.send_message(message.chat.id, message_text_db)
+
+    bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'All Cryptos' BUTTOM
+# FUNCTION FOR 'All Cryptos' BUTTON
 
 @bot.message_handler(func=lambda message: message.text == 'All Cryptos')
 def handle_all(message):
@@ -108,7 +109,7 @@ def handle_all(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Support' BUTTOM
+# FUNCTION FOR 'Support' BUTTON
 
 @bot.message_handler(func=lambda message: message.text == 'Support')
 def handle_help(message):
@@ -118,7 +119,7 @@ def handle_help(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Calculator' BUTTOM
+# FUNCTION FOR 'Calculator' BUTTON
 
 @bot.message_handler(func=lambda message: message.text == 'Calculator')
 def handle_calculate(message):
@@ -129,7 +130,7 @@ def handle_calculate(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Graph' BUTTOM
+# FUNCTION FOR 'Graph' BUTTON
 
 @bot.message_handler(func=lambda message: message.text == 'Graph')
 def handle_graph(message):
@@ -282,7 +283,8 @@ def handle_message(message):
     else:
         last_command = ''
         calculating = False
-        bot.send_message(message.chat.id, f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
+        bot.send_message(message.chat.id,
+                         f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
 
 
 # BOT START COMMAND
