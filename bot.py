@@ -244,19 +244,16 @@ def handle_message(message):
 
 
 # Bot start command
-
 if __name__ == '__main__':
 
     print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
 
     # MongoDB installisation
-
     client = MongoClient("Your_mongodb_uri_here", server_api=ServerApi('1'))
     db = client["CryptoRates"]
     cryptosdb = db["cryptos"]
 
     # Send a ping to confirm a successful connection
-
     try:
         client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
@@ -264,7 +261,6 @@ if __name__ == '__main__':
         print(e)
 
     # Cryptos list
-
     cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
     bot.polling()
