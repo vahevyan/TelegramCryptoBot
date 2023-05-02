@@ -1,5 +1,4 @@
 # IMPORTS
-
 import telebot
 from datetime import datetime, timedelta
 import mplfinance as mpf
@@ -8,32 +7,10 @@ import yfinance as yf
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-# BOT TOKEN
+# Bot installisation
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
-bot = telebot.TeleBot('Your_bot_token_here')
-print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
-
-# MONGODB CONNECTION
-
-client = MongoClient("Your_mongodb_client_uri", server_api=ServerApi('1'))
-db = client["Your_database_name"]
-cryptosdb = db["cryptos"]
-
-# Send a ping to confirm a successful connection
-
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-
-# CRYPTOS LIST
-
-cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
-
-
-# GETTING CRYPTO RATES FROM YAHOO FINANCE
-
+# Getting crypto rates
 def get_crypto_rate(crypto):
     ticker = yf.Ticker(f'{crypto}-USD')
     rate = ticker.info['regularMarketPrice']
@@ -44,7 +21,6 @@ def get_crypto_rate(crypto):
 
 
 # GETTING CRYPTO RATES HISTORY FROM YAHOO FINANCE
-
 def get_crypto_history(crypto, days):
     ticker = yf.Ticker(f'{crypto}-USD')
     history = ticker.history(period=f'{days}d')
@@ -55,8 +31,7 @@ calculating = True
 last_command = ''
 
 
-# START COMMAND AND BUTTONS
-
+# Start commands and buttons
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     global last_command
@@ -70,12 +45,10 @@ def handle_start(message):
     markup.add(*buttons)
 
     # START MESSAGE
-
     bot.send_message(message.chat.id, "Here are available commands. Choose from them!", reply_markup=markup)
 
 
 # FOR SENDING CRYPTO VALUES WITH DATE AND TIME
-
 @bot.message_handler(func=lambda message: message.text in cryptos)
 def handle_crypto(message):
     global last_command
@@ -85,7 +58,6 @@ def handle_crypto(message):
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
 
     # Insert the crypto data to MongoDB
-
     cryptosdb.insert_one({
         "crypto": crypto,
         "rate": rate,
@@ -96,7 +68,6 @@ def handle_crypto(message):
 
 
 # FUNCTION FOR 'All Cryptos' BUTTON
-
 @bot.message_handler(func=lambda message: message.text == 'All Cryptos')
 def handle_all(message):
     global last_command
@@ -110,7 +81,6 @@ def handle_all(message):
 
 
 # FUNCTION FOR 'Support' BUTTON
-
 @bot.message_handler(func=lambda message: message.text == 'Support')
 def handle_help(message):
     global last_command
@@ -120,7 +90,6 @@ def handle_help(message):
 
 
 # FUNCTION FOR 'Calculator' BUTTON
-
 @bot.message_handler(func=lambda message: message.text == 'Calculator')
 def handle_calculate(message):
     global calculating, last_command
@@ -131,14 +100,12 @@ def handle_calculate(message):
 
 
 # FUNCTION FOR 'Graph' BUTTON
-
 @bot.message_handler(func=lambda message: message.text == 'Graph')
 def handle_graph(message):
     global last_command
     last_command = ''
 
     # Buttoms in 'Graph' menu
-
     markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
     buttons = [telebot.types.KeyboardButton(crypto) for crypto in cryptos]
     buttons.append(telebot.types.KeyboardButton('Graph again'))
@@ -146,13 +113,11 @@ def handle_graph(message):
     markup.add(*buttons)
 
     # FOR SENDING MESSAGE TO USER FOR CHOOSING CURRENCY
-
     bot.send_message(message.chat.id, "Which cryptocurrency do you want to plot?", reply_markup=markup)
     bot.register_next_step_handler(message, handle_graph_crypto_input)
 
 
 # FOR USERS TO INPUT DAYS FOR SHOWING GRAPH
-
 def handle_graph_crypto_input(message):
     if message.text == "Main menu":
         print('User clicked "Main menu"')
@@ -168,7 +133,6 @@ def handle_graph_crypto_input(message):
 
 
 # FUNCTIONAL FOR GRAPH
-
 def handle_graph_days_input(message, crypto):
     global history
     try:
@@ -189,18 +153,15 @@ def handle_graph_days_input(message, crypto):
         historical_data = ticker.history(start=start_date, end=end_date)
 
         # Calculate the MACD indicator
-
         exp1 = historical_data['Close'].ewm(span=12, adjust=False).mean()
         exp2 = historical_data['Close'].ewm(span=26, adjust=False).mean()
         macd = exp1 - exp2
         signal = macd.ewm(span=9, adjust=False).mean()
 
         # Get the last price
-
         last_price = ticker.info['regularMarketPrice']
 
         # Create the plot with the MACD indicator and last price
-
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
                             title=f"{crypto} Price (Last {days} Days)",
                             ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
@@ -212,7 +173,6 @@ def handle_graph_days_input(message, crypto):
                                                       width=0.7, alpha=0.7, panel=0)])
 
         # Generate signals based on the MACD indicator
-
         buy_signals = []
         sell_signals = []
         for i in range(1, len(signal)):
@@ -222,7 +182,6 @@ def handle_graph_days_input(message, crypto):
                 sell_signals.append((historical_data.index[i], historical_data['Close'][i]))
 
         # Display the signals
-
         message_text = f"{crypto} Buy Signals:\n"
         for signal in buy_signals:
             message_text += f"{signal[0].strftime('%Y-%m-%d')}: {signal[1]:.2f}\n"
@@ -232,14 +191,12 @@ def handle_graph_days_input(message, crypto):
         bot.send_message(message.chat.id, message_text)
 
         # Send the plot directly
-
         buf = BytesIO()
         fig.savefig(buf, format='png', bbox_inches='tight')
         buf.seek(0)
         bot.send_photo(message.chat.id, photo=buf)
 
         # Insert the crypto price graph to MongoDB
-
         graph_data = history.to_dict(orient='records')
         cryptosdb.insert_one({
             "crypto": crypto,
@@ -289,4 +246,26 @@ def handle_message(message):
 
 # BOT START COMMAND
 
-bot.polling()
+if __name__ == '__main__':
+
+    print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
+
+    # MONGODB CONNECTION
+
+    client = MongoClient("mongodb+srv://vahevyan:12345@cluster0.u8iblbw.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+    db = client["CryptoRates"]
+    cryptosdb = db["cryptos"]
+
+    # Send a ping to confirm a successful connection
+
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
+
+    # CRYPTOS LIST
+
+    cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
+
+    bot.polling()
