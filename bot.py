@@ -1,4 +1,4 @@
-# IMPORTS
+# Imports
 import telebot
 from datetime import datetime, timedelta
 import mplfinance as mpf
@@ -20,7 +20,7 @@ def get_crypto_rate(crypto):
     return rate
 
 
-# GETTING CRYPTO RATES HISTORY FROM YAHOO FINANCE
+# Getting historical data from YFinance API
 def get_crypto_history(crypto, days):
     ticker = yf.Ticker(f'{crypto}-USD')
     history = ticker.history(period=f'{days}d')
@@ -44,11 +44,11 @@ def handle_start(message):
     buttons.append(telebot.types.KeyboardButton('Calculator'))
     markup.add(*buttons)
 
-    # START MESSAGE
+    # Start message
     bot.send_message(message.chat.id, "Here are available commands. Choose from them!", reply_markup=markup)
 
 
-# FOR SENDING CRYPTO VALUES WITH DATE AND TIME
+# For sending crypto values with last date update
 @bot.message_handler(func=lambda message: message.text in cryptos)
 def handle_crypto(message):
     global last_command
@@ -67,7 +67,7 @@ def handle_crypto(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'All Cryptos' BUTTON
+# Function for 'All Cryptos' button
 @bot.message_handler(func=lambda message: message.text == 'All Cryptos')
 def handle_all(message):
     global last_command
@@ -80,7 +80,7 @@ def handle_all(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Support' BUTTON
+# Function for 'Support' button
 @bot.message_handler(func=lambda message: message.text == 'Support')
 def handle_help(message):
     global last_command
@@ -89,7 +89,7 @@ def handle_help(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Calculator' BUTTON
+# Function for 'Calculator' button
 @bot.message_handler(func=lambda message: message.text == 'Calculator')
 def handle_calculate(message):
     global calculating, last_command
@@ -99,25 +99,25 @@ def handle_calculate(message):
     bot.send_message(message.chat.id, message_text)
 
 
-# FUNCTION FOR 'Graph' BUTTON
+# Function for 'Graph' button
 @bot.message_handler(func=lambda message: message.text == 'Graph')
 def handle_graph(message):
     global last_command
     last_command = ''
 
-    # Buttoms in 'Graph' menu
+    # Buttons in 'Graph' menu
     markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
     buttons = [telebot.types.KeyboardButton(crypto) for crypto in cryptos]
     buttons.append(telebot.types.KeyboardButton('Graph again'))
     buttons.append(telebot.types.KeyboardButton('Main menu'))
     markup.add(*buttons)
 
-    # FOR SENDING MESSAGE TO USER FOR CHOOSING CURRENCY
+    # User message
     bot.send_message(message.chat.id, "Which cryptocurrency do you want to plot?", reply_markup=markup)
     bot.register_next_step_handler(message, handle_graph_crypto_input)
 
 
-# FOR USERS TO INPUT DAYS FOR SHOWING GRAPH
+# For users to choose charts days
 def handle_graph_crypto_input(message):
     if message.text == "Main menu":
         print('User clicked "Main menu"')
@@ -132,7 +132,7 @@ def handle_graph_crypto_input(message):
     bot.register_next_step_handler(message, handle_graph_days_input, crypto)
 
 
-# FUNCTIONAL FOR GRAPH
+# Functional for graph
 def handle_graph_days_input(message, crypto):
     global history
     try:
@@ -210,8 +210,7 @@ def handle_graph_days_input(message, crypto):
         bot.register_next_step_handler(message, handle_graph_days_input, crypto)
 
 
-# FUNCTIONAL FOR CALCULATOR
-
+# Functional for calculator
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
     global calculating, last_command
@@ -244,13 +243,13 @@ def handle_message(message):
                          f'Please use the function button ( Calculator ) below first before calculating cryptocurrency.')
 
 
-# BOT START COMMAND
+# Bot start command
 
 if __name__ == '__main__':
 
     print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
 
-    # MONGODB CONNECTION
+    # MongoDB installisation
 
     client = MongoClient("mongodb+srv://vahevyan:12345@cluster0.u8iblbw.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
     db = client["CryptoRates"]
@@ -264,7 +263,7 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 
-    # CRYPTOS LIST
+    # Cryptos list
 
     cryptos = ['BTC', 'ETH', 'DOGE', 'LTC', 'XRP']
 
