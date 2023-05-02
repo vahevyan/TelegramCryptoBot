@@ -8,7 +8,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 # Bot installisation
-bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
+bot = telebot.TeleBot('Your_token_here')
 
 # Getting crypto rates
 def get_crypto_rate(crypto):
@@ -251,7 +251,7 @@ if __name__ == '__main__':
 
     # MongoDB installisation
 
-    client = MongoClient("mongodb+srv://vahevyan:12345@cluster0.u8iblbw.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+    client = MongoClient("Your_mongodb_uri_here", server_api=ServerApi('1'))
     db = client["CryptoRates"]
     cryptosdb = db["cryptos"]
 
