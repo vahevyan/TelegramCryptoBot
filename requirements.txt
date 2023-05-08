@@ -1,5 +1,5 @@
 pyTelegramBotAPI
-yfinance==0.2.14
+yfinance
 mplfinance
 bytesbufio
 pymongo
