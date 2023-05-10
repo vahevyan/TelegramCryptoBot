@@ -8,7 +8,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 # Bot installisation
-bot = telebot.TeleBot('Your_token_here')
+bot = telebot.TeleBot('6004353621:AAGwlfwv5F9Z-hzPgBv4VkC94WrxNLKcVNc')
 
 # Getting crypto rates
 def get_crypto_rate(crypto):
