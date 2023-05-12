@@ -24,7 +24,7 @@ or
 
 ```bash
 pip install pyTelegramBotAPI
-pip install yfinance==0.2.14
+pip install yfinance
 pip install mplfinance
 pip install bytesbufio
 pip install pymongo
