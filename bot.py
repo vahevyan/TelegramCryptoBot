@@ -13,7 +13,7 @@ bot = telebot.TeleBot('bot-token-here')
 # Getting crypto rates
 def get_crypto_rate(crypto):
     ticker = yf.Ticker(f'{crypto}-USD')
-    rate = ticker.info['regularMarketPrice']
+    rate = ticker.info['regularMarketOpen']
     print(ticker.history(period='10d'))
     print(ticker.info)
     print(f"Todays rate of {crypto} = ${rate}")
@@ -56,6 +56,7 @@ def handle_crypto(message):
     crypto = message.text
     rate = get_crypto_rate(crypto)
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
+    bot.send_message(message.chat.id, message_text)
 
     # Insert the crypto data to MongoDB
     cryptosdb.insert_one({
@@ -159,7 +160,7 @@ def handle_graph_days_input(message, crypto):
         signal = macd.ewm(span=9, adjust=False).mean()
 
         # Get the last price
-        last_price = ticker.info['regularMarketPrice']
+        last_price = ticker.info['regularMarketOpen']
 
         # Create the plot with the MACD indicator and last price
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
