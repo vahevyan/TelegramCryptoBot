@@ -8,7 +8,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 # Bot installisation
-bot = telebot.TeleBot('bot-token-here')
+bot = telebot.TeleBot('your-bot-api')
 
 # Getting crypto rates
 def get_crypto_rate(crypto):
@@ -56,7 +56,7 @@ def handle_crypto(message):
     crypto = message.text
     rate = get_crypto_rate(crypto)
     message_text = f'{crypto}: ${rate:.2f}\nLast updated: {datetime.now()}'
-    bot.send_message(message.chat.id, message_text)
+    # bot.send_message(message.chat.id, message_text) # You need this line if you are using bot without mongodb so u can remove "#"
 
     # Insert the crypto data to MongoDB
     cryptosdb.insert_one({
@@ -165,7 +165,7 @@ def handle_graph_days_input(message, crypto):
         # Create the plot with the MACD indicator and last price
         fig, axs = mpf.plot(historical_data, type='candle', mav=(3, 6, 9), volume=True, style='yahoo',
                             title=f"{crypto} Price (Last {days} Days)",
-                            ylabel=f"Live Price (USD): {ticker.info['regularMarketPrice']:.2f}", ylabel_lower='Volume',
+                            ylabel=f"Live Price (USD): {ticker.info['regularMarketOpen']:.2f}", ylabel_lower='Volume',
                             show_nontrading=True, returnfig=True,
                             figratio=(1.5, 1), figscale=1.5,
                             addplot=[mpf.make_addplot(macd, color='orange', panel=1),
@@ -250,7 +250,7 @@ if __name__ == '__main__':
     print('!!!WAIT UNTIL MONGODB AND BOT API CONNECTING AFTER YOU CAN USE BOT!!!')
 
     # MongoDB installisation
-    client = MongoClient("Your_mongodb_uri_here", server_api=ServerApi('1'))
+    client = MongoClient("your-mongodb", server_api=ServerApi('1'))
     db = client["CryptoRates"]
     cryptosdb = db["cryptos"]
 
